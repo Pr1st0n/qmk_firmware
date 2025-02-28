@@ -26,32 +26,32 @@ enum winry315_layers {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [BASE] = LAYOUT_via(
-            KC_HOME,           KC_MUTE,           LCTL(KC_UP),
-        KC_TRNS, KC_TRNS,  KC_VOLD, KC_VOLU,  LCTL(KC_LEFT), LCTL(KC_RIGHT),
-             KC_1,    KC_2,    KC_3,    KC_4,    KC_5,
-             KC_6,    KC_7,    KC_8,    KC_9,    LAG(KC_ESC),
-             U_LTESC, KC_TAB,  KC_SPC,  RGB_TOG, HYPR(KC_A)
+            HYPR(KC_S),           KC_MUTE,         RGB_TOG,
+        KC_TRNS, KC_TRNS,  KC_VOLD, KC_VOLU,  KC_BRIU, KC_BRID,
+             HYPR(KC_S),    KC_2,    KC_3,    KC_4,    KC_5,
+             LAG(KC_ESC),    HYPR(KC_U), HYPR(KC_I),  KC_9,    LAG(KC_ESC),
+             LCAG(KC_R), HYPR(KC_J), HYPR(KC_K),  RGB_TOG, HYPR(KC_A)
     ),
     [ONE] = LAYOUT_via(
             KC_TRNS,           KC_MUTE,           KC_TRNS,
         KC_TRNS, KC_TRNS,  KC_VOLD, KC_VOLU,  KC_TRNS, KC_TRNS,
-             HYPR(KC_P), HYPR(KC_S), HYPR(KC_C), HYPR(KC_G), HYPR(KC_W),
-             HYPR(KC_I), HYPR(KC_N), HYPR(KC_LBRC), HYPR(KC_X), HYPR(KC_O),
-             HYPR(KC_F), HYPR(KC_M), HYPR(KC_RBRC), HYPR(KC_V), HYPR(KC_T)
+             KC_TRNS, KC_TRNS, KC_TRNS, HYPR(KC_G), HYPR(KC_W),
+             KC_TRNS, KC_TRNS, KC_TRNS, HYPR(KC_X), HYPR(KC_O),
+             KC_TRNS, KC_TRNS, KC_TRNS, HYPR(KC_V), HYPR(KC_T)
     ),
     [TWO] = LAYOUT_via(
-            KC_SLEP,           KC_MUTE,           BL_TOGG,
+            KC_SLEP,           KC_MUTE,           KC_TRNS,
         KC_TRNS, KC_TRNS,  KC_VOLD, KC_VOLU,  KC_TRNS, KC_TRNS,
-             KC_SLEP, KC_TRNS, KC_TRNS, KC_TRNS, BL_TOGG,
-             KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, HYPR(KC_2),
-             HYPR(KC_X), KC_TRNS, KC_TRNS, KC_TRNS, HYPR(KC_1)
+             KC_TRNS, KC_TRNS, KC_TRNS, HYPR(KC_5), HYPR(KC_6),
+             KC_TRNS, KC_TRNS, KC_TRNS, HYPR(KC_4), HYPR(KC_2),
+             KC_TRNS, KC_TRNS, KC_TRNS, HYPR(KC_3),HYPR(KC_1)
     ),
     [ADJUST] = LAYOUT_via(
-            KC_SLEP,           KC_MUTE,           BL_TOGG,
-        KC_TRNS, KC_TRNS,  KC_VOLD, KC_VOLU,  KC_TRNS, KC_TRNS,
-             KC_SLEP, KC_TRNS, KC_TRNS, KC_TRNS, BL_TOGG,
-             KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, HYPR(KC_2),
-             KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, HYPR(KC_1)
+            KC_TRNS,           KC_TRNS,           KC_TRNS,
+        KC_TRNS, KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS, KC_TRNS,
+             KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+             KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+             KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
     ),
 };
 
@@ -114,10 +114,25 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                     rgblight_decrease_val();
                 }
             } else {
-                tap_code_delay(clockwise ? KC_MNXT : KC_MPRV, 10);
+                tap_code_delay(clockwise ? KC_BRIU : KC_BRID, 10);
             }
             break;
     }
     return false;
+}
+
+// catch keypresses
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  if (keycode == HYPR(KC_S)) {
+    // if putting the computer to sleep, turn off LEDs
+    rgb_matrix_disable();
+  } else if (keycode == RGB_TOG || keycode == MO(1)) {
+    // process as normal
+  } else {
+    // turn on LEDs on any other keypress
+    rgb_matrix_enable();
+  }
+
+  return true;
 }
 
